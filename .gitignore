@@ -1,4 +1,17 @@
+# Mac
+.DS_Store
+
+# emacs backup files
 *~
-*.p1
-*.pre
-*.p1.d
+
+# MPLAB X aka NetBeans
+
+*/build
+*/dist
+*/nbproject/private
+
+*.class
+*.jar
+*.war
+*.ear
+
