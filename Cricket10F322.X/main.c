@@ -17,18 +17,18 @@ void pause(int count) {
 }
 
 // LED's
-#define RED     LATAbits.LATA1
-#define GREEN   LATAbits.LATA0
+#define RED     LATAbits.LATA0
+#define GREEN   LATAbits.LATA1
 
 // Blink the LED's.
 // Both will be OFF when we're done.
 void blink(int count) {
     RED = 1;
-    GREEN = 1;
+    //GREEN = 1;
     pause(count);
     
     RED = 0;
-    GREEN = 0;
+    //GREEN = 0;
     pause(count);
 }
 
@@ -41,8 +41,9 @@ void main(void)
 {
     SYSTEM_Initialize();    // Initialize everything
 
-    TRISAbits.TRISA0 = 0;   // Set Channel RA0 (GREEN) as output
-    TRISAbits.TRISA1 = 0;   // Set Channel RA1 (RED) as output
+    TRISAbits.TRISA0 = 0;   // Set Channel RA0 (RED) as output
+    TRISAbits.TRISA1 = 0;   // Set Channel RA1 (GREEN) as output
+    TRISAbits.TRISA2 = 0;   // Set Channel RA2 (NCO) as output
     
      // blink a few times quickly to let us know we did a reset
     for (i=0; i<5; i++) {
@@ -52,7 +53,8 @@ void main(void)
     //TMR2_StartTimer();      // Start Timer2 for PWM operation
     //PWM_LoadDutyValue(50*4); // some reasonable value
     TEMPERATURE_Start();
-    NCO_Start(); // This will preempt RA1 (RED) so it connects to CWG output.
+    NCO_Start();
+    pause(1000);
 
     while (1) {
         // LED D2 Brightness control
@@ -73,38 +75,51 @@ void main(void)
         t_new = TEMPERATURE_Get();
         if (t_new > t_old) {
             // Temp UP so go RED
-            //RED = 1;
-            GREEN = 0;
+            RED = 1;
+            //GREEN = 0;
+            NCO_Set(0,50);
+            
         } else if (t_new < t_old) {
             // Temp DOWN so go GREEN
-            //RED = 0;
-            GREEN = 1;
+            RED = 0;
+            //GREEN = 1;
+            NCO_Set(0, 25);
+            
         } else { 
-            // NO CHANGE
-            cyclecount--;
-            // no change for 10 cycles -- show temp value on 2 LED's !
-            if (cyclecount <= 0) {
-                int b;
-                uint8_t t = t_new;
-                for (b = 0; b < 8; b++) {
-                    // MARK
-                    //RED = 1;
-                    if (t & 0x80) { //show highest bit
-                        GREEN = 1;
-                    } else {
-                        GREEN = 0;
-                    }
-                    pause(8000);
-                    // SPACE
-                    //RED = 0;
-                    GREEN = 0;
-                    pause(7000);
-                    t <<= 1; // shift to the left
-                }
-                cyclecount = 10;
-            }
+            NCO_Set(0, t_new>>2);
+//            for (i=0; i<5; i++) {
+//    //            NCO_Set(255);
+//                blink(1000);
+//      //          NCO_Set(0);
+//                //blink(1000);
+//            }
+//            // NO CHANGE
+//            cyclecount--;
+//            // no change for 10 cycles -- show temp value on 2 LED's !
+//            if (cyclecount <= 0) {
+//                int b;
+//                uint8_t t = t_new;
+//                for (b = 0; b < 8; b++) {
+//                    // MARK
+//                    //RED = 1;
+//                    if (t & 0x80) { //show highest bit
+//                        GREEN = 1;
+//                    } else {
+//                        GREEN = 0;
+//                    }
+//                    pause(8000);
+//                    // SPACE
+//                    //RED = 0;
+//                    GREEN = 0;
+//                    pause(7000);
+//                    t <<= 1; // shift to the left
+//                }
+//                cyclecount = 10;
+//            }
         }
-        pause(4000);    // wait a little while before checking again.
+        pause(t_new <<2);    // wait a little while before checking again.
+        NCO_Stop();
+        pause(t_new <<4);
         t_old = t_new;
     }
 }
