@@ -20,15 +20,51 @@ void pause(int count) {
 #define RED     LATAbits.LATA0
 #define GREEN   LATAbits.LATA1
 
+
+
+
+// Patterns I'd like to hear
+//
+// BRIGHT
+//
+//    peep peep .................................... peep ........
+//
+//    peep peep peep ............ peep peep peep .............
+//
+//    peep ... peep ... peep  (LOUD)
+//
+// DARK
+
+int green_led = 0;
+int duty_cycle = 3;
+
+void interrupt handle_interrupts() {
+    // is this a timer2 interrupt?
+    if (TMR2IE && PIR1bits.TMR2IF) {
+        // Make duty cycle 25%
+        if (green_led < duty_cycle) {
+            //GREEN = 0;
+            NCO_Disable();
+            green_led++;
+        } else {
+            //GREEN = 1;
+            NCO_Enable();
+            green_led = 0;
+        }
+        
+        PIR1bits.TMR2IF = 0;
+    }
+}
+
 // Blink the LED's.
 // Both will be OFF when we're done.
 void blink(int count) {
-    RED = 1;
-    //GREEN = 1;
+    //RED = 1;
+    GREEN = 1;
     pause(count);
     
-    RED = 0;
-    //GREEN = 0;
+    //RED = 0;
+    GREEN = 0;
     pause(count);
 }
 
@@ -45,48 +81,63 @@ void main(void)
     TRISAbits.TRISA1 = 0;   // Set Channel RA1 (GREEN) as output
     TRISAbits.TRISA2 = 0;   // Set Channel RA2 (NCO) as output
     
-     // blink a few times quickly to let us know we did a reset
-    for (i=0; i<5; i++) {
-        blink(5000);
-    }
-        
-    //TMR2_StartTimer();      // Start Timer2 for PWM operation
+    // blink a few times quickly to let us know we did a reset
+    //for (i=0; i<5; i++) { blink(5000); }
+
+    Timer2_Enable();
     //PWM_LoadDutyValue(50*4); // some reasonable value
-    TEMPERATURE_Start();
-    NCO_Start();
+    //TEMPERATURE_Start();
+    NCO_Enable();
     pause(1000);
 
+    TRISAbits.TRISA0 = 1;   // Set Channel RA0 A/D as photo sensor input
+    
+    Enable_Interrupts();    
+
     while (1) {
-        // LED D2 Brightness control
-        /*multiply duty by 4 in order to scale value for better PWM resolution
-          8 bit ADC output is scaled to get a better resolution on 10-bit PWM*/
+        // Track amount of light
+        t_new = ADC_GetConversion (channel_AN0);
+                
+        // As light increases, Ropt goes down, so Vopt goes up. I think.
+        if (t_new > 128) {
+            // Too much light, I am scared!
+            Timer2_Disable();
+        } else {
+            Timer2_Enable();
+        }
         
-        // waits for conversion!
-        //adc =  ADC_GetConversion (channel_AN2) * 4; // function call to read value from Potentiometer
-        //PWM_LoadDutyValue (adc); // call function to write value of "duty" to the PWM duty cycle
-        
-        //adc = ADC_GetConversion (channel_AN2);
-        //PR2 = adc;
-        
-        // note that if you write to TMR2 instead of PR2 then the pre and post scalers
-        // are cleared back to 1:1
+        if (t_new > 80) {
+            // stretch out duty cycle when it's bright
+            duty_cycle = 6;
+            CWG_Disable(); // Get quieter by holding RA1 low.
+        } else if (t_new > 64) {
+            // stretch out duty cycle when it's bright
+            duty_cycle = 4;
+            CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
+        } else {
+            duty_cycle = 2;
+            CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
+        }
         
         // Track temperature. 
-        t_new = TEMPERATURE_Get();
+        //t_new = TEMPERATURE_Get();
+        
         if (t_new > t_old) {
             // Temp UP so go RED
-            RED = 1;
+            //RED = 1;
             //GREEN = 0;
-            NCO_Set(0,50);
+            //NCO_Set(0,50);
             
         } else if (t_new < t_old) {
             // Temp DOWN so go GREEN
-            RED = 0;
+            //RED = 0;
             //GREEN = 1;
-            NCO_Set(0, 25);
+            //NCO_Set(0, 25);
             
         } else { 
-            NCO_Set(0, t_new>>2);
+            NCO_Set(1, (255 - t_new));
+            Timer2_SetPeriod(t_new);
+            
 //            for (i=0; i<5; i++) {
 //    //            NCO_Set(255);
 //                blink(1000);
@@ -117,9 +168,7 @@ void main(void)
 //                cyclecount = 10;
 //            }
         }
-        pause(t_new <<2);    // wait a little while before checking again.
-        NCO_Stop();
-        pause(t_new <<4);
+        pause(1000);
         t_old = t_new;
     }
 }

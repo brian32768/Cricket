@@ -17,11 +17,11 @@
 void SYSTEM_Initialize(void)
 {
     OSCILLATOR_Initialize();
-    //ADC_Initialize();
+    ADC_Initialize();
     //PWM_Initialize();
-    //TMR2_Initialize();
+    Timer2_Initialize();
     NCO_Initialize();
-    TEMPERATURE_Initialize();
+    //TEMPERATURE_Initialize();
 }
 
 void OSCILLATOR_Initialize(void)
@@ -30,6 +30,17 @@ void OSCILLATOR_Initialize(void)
     //OSCCON = 0x60; // 8MHz clock
     OSCCON = 0x50; // 4Mhz clock
     //OSCCON = 0x01; // 250 kHz clock
+}
+
+void Enable_Interrupts(void) {
+    // enable interrupts from TIMER 2
+    PIE1bits.TMR2IE = 1;
+    
+    // Global
+    INTCONbits.GIE = 1;
+    
+    // Peripherals
+    INTCONbits.PEIE = 1;
 }
 
 // End of File

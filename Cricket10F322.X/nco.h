@@ -12,8 +12,8 @@
 
 void NCO_Initialize(void);
 
-void NCO_Start(void);
-void NCO_Stop(void);
+void NCO_Enable(void);
+void NCO_Disable(void);
 
 void NCO_Set(uint8_t hbyte, uint8_t lbyte);
 
