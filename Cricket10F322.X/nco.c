@@ -32,22 +32,22 @@ void NCO_Initialize(void) {
     CWG1CON1bits.G1ASDLA = 0x01; // Tristate CWG1A output when in shutdown.
     CWG1CON1bits.G1ASDLB = 0x02; // Drive CWG1B output low when in shutdown.
     //   Set enable and clear auto-restart enable
-    CWG1CON2bits.G1ASE   = 1;
-    CWG1CON2bits.G1ARSEN = 0;
+    CWG1CON2bits.G1ASE   = 1; // output is enabled
+    CWG1CON2bits.G1ARSEN = 0; // auto-restart is disabled
     // Step 5. Select input source
     CWG1CON1bits.G1IS    = 0x02; // Source is N1OUT
     // Step 6. 
     CWG1CON0bits.G1CS = 0; // Set clock source to FOsc
     //   Set output polarities
-    CWG1CON0bits.G1POLA = 0; // Polarity A is normal
-    CWG1CON0bits.G1POLB = 1; // Polarity B is normal
+    //CWG1CON0bits.G1POLA = 0; // Polarity A is normal
+    CWG1CON0bits.G1POLB = 0; // Polarity B is normal
     //   Enable CWG1B output (pin RA1)
     CWG1CON0bits.G1OEA  = 0; // Disable CWG1A output on RA0
     CWG1CON0bits.G1OEB  = 1; // Enable CWG1B output on RA1
     // Step 7.
     CWG1CON0bits.G1EN = 1; // Enable CWG module
     // Step 8.
-    TRISAbits.TRISA0 = 0;   // Set CWG1A as output. (See docs page 68)
+    //TRISAbits.TRISA0 = 0;   // Set CWG1A as output. (See docs page 68)
     TRISAbits.TRISA1 = 0;   // Set CWG1B as output. (See docs page 68)
 
     // Step 9. Clear G1ASE to start CWG 
@@ -72,18 +72,24 @@ void NCO_Disable(void) {
 
 // Enable CWG to make the output LOUDER.
 void CWG_Enable(void) {
-    CWG1CON0bits.G1EN = 1; // Enable CWG module
+    CWG1CON2bits.G1ASE   = 0; // clear autoshutdown state
 }
 
 // Disable CWG to make the output softer.
 void CWG_Disable(void) {
-    CWG1CON0bits.G1EN = 0; // Disable CWG module
+    CWG1CON2bits.G1ASE   = 1; // force autoshutdown state
 }
 
-void NCO_Set(uint8_t hbyte, uint8_t lbyte) {
+void NCO_SetHL(uint8_t high, uint8_t low) {
     // NB ALWAYS LOAD H FIRST else it is ignored. Values are latched on L
-    NCO1INCH = hbyte;
-    NCO1INCL = lbyte;
+    NCO1INCH = high;
+    NCO1INCL = low;
+}
+
+void NCO_SetPitch(int pitch) {
+    // NB ALWAYS LOAD H FIRST else it is ignored. Values are latched on L
+    NCO1INCH = (uint8_t)(pitch >> 8);
+    NCO1INCL = (uint8_t)(pitch);
 }
 
 

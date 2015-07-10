@@ -51,41 +51,9 @@ typedef enum
     channel_AN0  =  0b000
 } adc_channel_t;
 
-
-// Section: ADC Module APIs
-
-/*
-  @Summary
-    Initializes the ADC
-
-  @Description
-    This routine initializes the Initializes the ADC.
-    This routine must be called before any other ADC routine is called.
-    This routine should only be called once during system initialization.
-*/
-
 void ADC_Initialize(void);
 
-/*
-  @Summary
-    Returns the ADC conversion value
-    also allows selection of a channel for conversion.
-
-  @Description
-    This routine is used to select desired channel for conversion
-    and to get the analog to digital converted value.
-
-  @Preconditions
-    ADC_Initialize() function should have been called before calling this function.
-
-  @Returns
-    Returns the converted value.
-
-  @Param
-    Pass in required channel number.
-
-    ADC_Initialize();
-*/
+void ADC_Enable(void);
 
 adc_result_t ADC_GetConversion(adc_channel_t channel);
 

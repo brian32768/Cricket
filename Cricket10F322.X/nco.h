@@ -15,7 +15,8 @@ void NCO_Initialize(void);
 void NCO_Enable(void);
 void NCO_Disable(void);
 
-void NCO_Set(uint8_t hbyte, uint8_t lbyte);
+void NCO_SetHL(uint8_t high, uint8_t low);
+void NCO_SetPitch(int pitch);
 
 #endif	/* NCO_H */
 
