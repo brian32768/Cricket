@@ -56,7 +56,7 @@ temperature_result_t t_old = 0, t_new = 0;
 #define MED_PITCH   1050  // 1900 Hz
 #define LOW_PITCH    500  // 950 Hz
 
-#define BASE_PITCH   900
+#define BASE_PITCH   800
 
 // Sensor settings
 #define TOO_BRIGHT   192
@@ -79,9 +79,9 @@ void main(void)
     CWG_Enable(); // Turn on complementary waveform
     
     // Pitch sweep at startup
-    for (i = LOW_PITCH; i<HIGH_PITCH; i += 10) {
+    for (i = LOW_PITCH; i<HIGH_PITCH; i += 25) {
         NCO_SetPitch(i);
-        pause(90);
+        pause(45);
     }
 
 #if TESTING_SENSOR
@@ -136,17 +136,17 @@ void main(void)
 
                 if (t_new > BRIGHT) {
                     // stretch out duty cycle when it's bright
-                    duty_cycle = 32;
+                    duty_cycle = 256;
                     CWG_Disable(); // Get quieter by holding CWG low.
                     Timer2_SetPeriod(T2_BASE); // how long speaker is on
                 } else if (t_new > SHADY) {
                     // stretch out duty cycle when it's bright
-                    duty_cycle = 24;
+                    duty_cycle = 128;
                     CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
                     Timer2_SetPeriod(T2_BASE - t_new); // how long speaker is on
                 } else 
                 {
-                    duty_cycle = 16;
+                    duty_cycle = 64;
                     CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
                     Timer2_SetPeriod(T2_BASE - t_new); // how long speaker is on
                 }
