@@ -18,5 +18,8 @@ void NCO_Disable(void);
 void NCO_SetHL(uint8_t high, uint8_t low);
 void NCO_SetPitch(int pitch);
 
+void CWG_Enable(void);
+void CWG_Disable(void);
+
 #endif	/* NCO_H */
 
