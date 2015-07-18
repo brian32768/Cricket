@@ -17,7 +17,6 @@
 void SYSTEM_Initialize(void)
 {
     OSCILLATOR_Initialize();
-    ADC_Initialize();
     //PWM_Initialize();
     Timer2_Initialize();
     NCO_Initialize();

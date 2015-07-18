@@ -19,12 +19,12 @@ void ADC_Initialize(void)
     // ADON = 1   = ON
             
     ADCON = 0x89;         // ADON enabled; CHS AN2;
-
-    TRISAbits.TRISA2 = 1; // POT1 pin (RA2) as input
-    ANSELAbits.ANSA2 = 1; // configure (RA2) as analog input
-
 }
 
+void ADC_Enable(void) {
+    TRISAbits.TRISA0 = 1; // PORT pin as input
+    ANSELAbits.ANSA0 = 1; // configure as analog input
+}
 
 adc_result_t ADC_GetConversion(adc_channel_t channel)
 {
