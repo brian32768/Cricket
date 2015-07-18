@@ -1,0 +1,149 @@
+Before we start: How solder joints look.
+
+These were done by someone who had practiced soldering for about 20 minutes. They are not perfect but good enough. Your solder joints need to have a smooth shiny appearance. If they are dull grey or rough, they might not work. You can reflow the joint by heating it again and applying a little more solder. 
+
+You need ENOUGH solder but not big massive blobs.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/000_battery_solder_joint.png"><img class="alignnone size-full wp-image-92" src="http://wildsong.biz/wp-content/uploads/2015/07/000_battery_solder_joint.png" alt="battery solder joint" width="229" height="243" /></a>
+
+We're using "dead bug" style construction. We turn the PIC upside down so its legs stick up in the air like a dead bug.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/000_PIC_solder_joints.png"><img class="alignnone size-medium wp-image-93" src="http://wildsong.biz/wp-content/uploads/2015/07/000_PIC_solder_joints-300x269.png" alt="PIC solder joints" width="300" height="269" /></a>
+
+Basic project consists of these parts.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/001_Basic_Parts_all.jpg"><img class="alignnone size-medium wp-image-94" src="http://wildsong.biz/wp-content/uploads/2015/07/001_Basic_Parts_all-300x190.jpg" alt="All cricket parts" width="300" height="190" /></a>
+
+PIC 10LF322 is an 8-bit microcontroller made by Microchip.
+The piezo speaker bends when voltage is applied to it, bend it fast enough and it makes a sound.
+Resistors are devices that limit current.
+A photoresistor is a special resistor that can detect light and varies its resistance.
+
+Each resistor has a color code to tell you what its value is in ohms. For the cricket we need two, 1K = 1000 ohms and 22K = 22,000 ohms.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/001_Basic_Parts_resistor_color_codes.jpg"><img class="alignnone size-medium wp-image-95" src="http://wildsong.biz/wp-content/uploads/2015/07/001_Basic_Parts_resistor_color_codes-300x253.jpg" alt="Resistor color codes" width="300" height="253" /></a>
+
+There is a program preloaded into the PIC microcontroller that makes everything work.
+
+Using "dead bug" construction will make this  project cheap and quick to build. The downside is, it's easy to break pins off the PIC and hard to reuse parts.
+
+To reduce the chances of messing up, we will build parts first into 2 subassemblies, then attach those subassemblies to the PIC.
+
+The first subassembly is the speaker.
+
+We have to attach a wire to one lead of the speaker and the 1K (RED-BLACK-BROWN-GOLD) resistor to the other lead.
+It's easiest to solder the resistor to the speaker and then the wire to the speaker as two steps.
+
+Step 1, resistor.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/004_Speaker_Subassembly_step1.jpg"><img class="alignnone size-medium wp-image-97" src="http://wildsong.biz/wp-content/uploads/2015/07/004_Speaker_Subassembly_step1-300x189.jpg" alt="Soldering resistor to speaker" width="300" height="189" /></a>
+
+Step 2, wire lead.
+
+[caption id="attachment_98" align="alignnone" width="300"]<a href="http://wildsong.biz/wp-content/uploads/2015/07/005_Speaker_Subassembly_step2.jpg"><img class="size-medium wp-image-98" src="http://wildsong.biz/wp-content/uploads/2015/07/005_Speaker_Subassembly_step2-300x184.jpg" alt="Speaker + 1K resistor" width="300" height="184" /></a> Speaker + 1K resistor[/caption]
+
+
+The second subassembly is the light sensor.
+
+Together, the photoresistor and the 22K resistor form a circuit known as a "voltage divider".
+When we're done, the photoresistor goes to the + side of the battery and the resistor to the - side.
+The wire lead goes to the input on the PIC controller. Put the three parts together (wire + 2 resistors) then solder.
+
+[caption id="attachment_96" align="alignnone" width="300"]<a href="http://wildsong.biz/wp-content/uploads/2015/07/003_Sensor_Subassembly.jpg"><img class="size-medium wp-image-96" src="http://wildsong.biz/wp-content/uploads/2015/07/003_Sensor_Subassembly-300x225.jpg" alt="Photo resistor + 22K resistor + wire" width="300" height="225" /></a> Photo resistor + 22K resistor + wire[/caption]
+
+Next The sensor gets attached to the battery. DON'T SOLDER YET. There are more wires to add.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/011_Sensor_attached_to_battery_holder_step1of3.jpg"><img class="alignnone size-medium wp-image-107" src="http://wildsong.biz/wp-content/uploads/2015/07/011_Sensor_attached_to_battery_holder_step1of3-300x243.jpg" alt="Attach sensor to battery" width="300" height="243" /></a>
+
+Add a wire to each terminal on the battery holder. Use a light color (I used yellow) for "+" and a dark (purple) for "-".
+The battery holder has a little "-" in a circle near the "-" terminal. If you get the wires backwards, nothing will work.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/012_Attach_wires_to_battery_assembly_step2of3.jpg"><img class="alignnone size-medium wp-image-108" src="http://wildsong.biz/wp-content/uploads/2015/07/012_Attach_wires_to_battery_assembly_step2of3-300x181.jpg" alt="Attach wires to battery" width="300" height="181" /></a>
+
+If they don't fit through the hole attach them near the terminals on the resistor leads.
+Now solder everything. Solder should flow over the whole joint, you need more here than anywhere else in the project.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/013_Solder_battery_holder_step3of3.jpg"><img class="alignnone size-medium wp-image-109" src="http://wildsong.biz/wp-content/uploads/2015/07/013_Solder_battery_holder_step3of3-300x219.jpg" alt="Solder everything" width="300" height="219" /></a>
+
+The PIC controller has eight pins. Pin 1 is marked by a little dimple.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/006_PIC_Finding_PIN_1_text.jpg"><img class="alignnone size-medium wp-image-99" src="http://wildsong.biz/wp-content/uploads/2015/07/006_PIC_Finding_PIN_1_text-300x250.jpg" alt="Finding PIN 1" width="300" height="250" /></a>
+
+From the top... 
+
+1    8
+2    7
+3    6
+4    5
+
+As a dead bug... upside down
+
+8    1
+7    2
+6    3
+5    4
+
+You HAVE to keep track of pin 1 once you turn things upside down else NOTHING WILL WORK!!!
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/007_1_lid.jpg"><img class="alignnone size-medium wp-image-101" src="http://wildsong.biz/wp-content/uploads/2015/07/007_1_lid-300x228.jpg" alt="The LID" width="300" height="228" /></a>
+
+The way I did this was by putting a DOT on the can with a marker, 
+then gluing the PIC down so that PIN 1 is NEAR the DOT.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/007_2_PIC_mark_lid.jpg"><img class="alignnone size-medium wp-image-102" src="http://wildsong.biz/wp-content/uploads/2015/07/007_2_PIC_mark_lid-300x228.jpg" alt="Mark the lid" width="300" height="228" /></a>
+
+Use hot melt glue, and do this QUICKLY -- the cold metal can will cause the glue to glob up and harden fast.
+If that happens just peel off the glue and try again. You DON'T want the PIC to fall off in the next step, so use a good size blob.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/007_3_PIC_glue.jpg"><img class="alignnone size-medium wp-image-103" src="http://wildsong.biz/wp-content/uploads/2015/07/007_3_PIC_glue-300x228.jpg" alt="Glue down the PIC" width="300" height="228" /></a>
+
+Now attach the leads for the speaker assembly to the PIC. 
+
+8    1
+7    2
+6    3 ----------- speaker
+5    4 ----------- 1k resistor
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/008_Attaching_speaker.jpg"><img class="alignnone size-medium wp-image-104" src="http://wildsong.biz/wp-content/uploads/2015/07/008_Attaching_speaker-300x259.jpg" alt="Attach speaker subassembly" width="300" height="259" /></a>
+
+After soldering, carefully bend leads to position the speaker inside the lid. It has to be far enough inside so the lid can still close.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/009_Reposition_speaker.jpg"><img class="alignnone size-medium wp-image-105" src="http://wildsong.biz/wp-content/uploads/2015/07/009_Reposition_speaker-300x220.jpg" alt="Fit speaker inside" width="300" height="220" /></a>
+
+Then glue the speaker down. This will just help keep everything together so it won't get broken as easily.
+Don't short out the metal connections to the can.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/010_Glue_down_speaker.jpg"><img class="alignnone size-medium wp-image-106" src="http://wildsong.biz/wp-content/uploads/2015/07/010_Glue_down_speaker-300x258.jpg" alt="Glue down speaker" width="300" height="258" /></a>
+
+
+Mount the battery in the can.
+
+Some of these cans have paint on them but to be on the safe side, put a piece of tape down to insulate the battery terminals from the metal.
+
+Then glue the battery to the tape. Pin 2 on the PIC gets the "-" wire and pin 7 gets "+" so position the battery / sensor assembly to make it
+convenient to hook the wires up.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/014_Glue_battery_assembly_into_lid.jpg"><img class="alignnone size-medium wp-image-110" src="http://wildsong.biz/wp-content/uploads/2015/07/014_Glue_battery_assembly_into_lid-300x269.jpg" alt="Glue down battery" width="300" height="269" /></a>
+
+After the glue has set, carefully bend each wire around and attach them to the PIC. Solder.
+
+<a href="http://wildsong.biz/wp-content/uploads/2015/07/015_Attach_battery_and_sensor_wires_to_PIC.jpg"><img class="alignnone size-medium wp-image-111" src="http://wildsong.biz/wp-content/uploads/2015/07/015_Attach_battery_and_sensor_wires_to_PIC-300x256.jpg" alt="DONE, ready for battery" width="300" height="256" /></a>
+
+Again that's PIN 7 = YELLOW ("+")
+and PIN 2 = PURPLE ("-")
+
+Normally RED = "+" and BLACK = "-" but I did not have red and black. The electrons only care if the wires are hooked up correctly.
+
+All the wiring is now done.
+
+[caption id="attachment_112" align="alignnone" width="300"]<a href="http://wildsong.biz/wp-content/uploads/2015/07/016_CR2032_battery.jpg"><img class="size-medium wp-image-112" src="http://wildsong.biz/wp-content/uploads/2015/07/016_CR2032_battery-300x204.jpg" alt="Note the plus, this side goes UP" width="300" height="204" /></a> Note the plus, this side goes UP[/caption]
+
+Pop in a button battery with the "+" side UP (visible when in the holder).
+The cricket should start chirping immediately. If not it might be too bright. It wants to be in dark places.
+
+[caption id="attachment_113" align="alignnone" width="300"]<a href="http://wildsong.biz/wp-content/uploads/2015/07/017_Battery_iinstalled_Chirp_Chirp_Chirp.jpg"><img class="size-medium wp-image-113" src="http://wildsong.biz/wp-content/uploads/2015/07/017_Battery_iinstalled_Chirp_Chirp_Chirp-300x237.jpg" alt="It should start chirping now..." width="300" height="237" /></a> It should start chirping now...[/caption]
+
+To be less annoying (and to make the battery last longer) if the
+lighting is not changing then the cricket will stop in a few
+minutes. Waving a light at it or shading the sensor (any significant
+change in lighting) will wake it up.
