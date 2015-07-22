@@ -85,9 +85,10 @@ uint8_t photo = 0;
 #define DARK          64
 
 // Timer2 period settings
-#define T2_BASE      255
+#define T2_BASE      180
 
-#if defined(PITCH_SWEEP)
+#define PITCH_SWEEP 1
+#if PITCH_SWEEP
 void pitch_sweep() {
     for (i = LOW_PITCH; i<HIGH_PITCH; i += 20) {
         NCO_SetPitch(i);
@@ -96,10 +97,8 @@ void pitch_sweep() {
 }
 #endif
 
-
-#define PLAY_NOTES 1
-
-#if defined(PLAY_NOTES)
+#define PLAY_NOTES 0
+#if PLAY_NOTES
 void play_note(int pitch, int duration) {
     NCO_SetPitch(pitch);
     tick(duration);
@@ -129,17 +128,22 @@ void main(void)
     NCO_Enable(); // Turn on main oscillator
     CWG_Enable(); // Turn on complementary waveform
     
+   
+#if PITCH_SWEEP
+    pitch_sweep();
     //pitch_sweep();
-    //pitch_sweep();
+#endif
+#if PLAY_NOTES
 //    play_note(0,250);
 //    play_note(500, 300);
-//    play_note(700, 500);
+    play_note(800, 500);
 //    play_note(500, 400);
-//    play_note(400, 300);
-//    play_note(200, 600);
+//6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       play_note(800, 500);
+    play_note(950, 600);
 //    play_note(0,1000);
+#endif
     
-#if TESTING_SENSOR
+#if TESTING_SENSOR==2
     Timer2_Disable();       // only emit continuous tones in test mode
 #else
     Timer2_SetPeriod(T2_BASE);
@@ -156,28 +160,7 @@ void main(void)
         photo = ADC_GetConversion(channel_AN0);
         
 #if TESTING_SENSOR
-            // Trying to find 2 good break points 
-        if (t_new > BRIGHT) {
-            // it's too bright for comfort
-            duty_cycle = 0;
-            NCO_Disable();
-            CWG_Disable();
-        } else if (t_new > SHADY) {
-            // It's sort of bright
-            NCO_Enable();
-            NCO_SetPitch(HIGH_PITCH);
-            CWG_Disable();
-        } else if (t_new > DARK) {
-            // It's shady
-            NCO_Enable();
-            NCO_SetPitch(MED_PITCH);
-            CWG_Enable();
-        } else { // DARK
-            NCO_Enable();
-            NCO_SetPitch(LOW_PITCH);
-            CWG_Enable();
-        }
-        CWG_Enable(); // loud is acceptable
+        new_state = dark; // for testing force into a fixed state
 #else
         if (photo > BRIGHT) {
             new_state = too_bright;
@@ -188,11 +171,11 @@ void main(void)
         } else {
             new_state = dark;        
         }
-        //new_state = shady; // for testing force into a fixed state
+#endif // TESTING_SENSOR
 
         if (!sleeping){
             
-            duty_cycle = photo>>2 + slow_start;
+            duty_cycle = photo>>4 + slow_start;
             if (slow_start<10)
             switch (new_state) {
                 case too_bright:
@@ -201,22 +184,22 @@ void main(void)
                     duty_cycle = 0;
                     NCO_Disable();
                     CWG_Disable();
-                    slow_start = 50;
+                    slow_start = 20;
                     break;
                 case bright:
-                    Timer2_SetPeriod(T2_BASE + photo>>1);
-                    duty_cycle += 96;
+                    Timer2_SetPeriod(T2_BASE - 128 + photo>>2);
+                    duty_cycle += 32;
                     NCO_Enable();
-                    CWG_Disable(); // Get quieter by holding CWG low.
+                    CWG_Enable(); // Get louder
                     break;
                 case shady:
-                    duty_cycle += 32;
+                    duty_cycle += 10;
                     NCO_Enable();
                     CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
                     Timer2_SetPeriod(T2_BASE + photo); // varied period of duty cycle
                     break;
                 case dark:
-                    duty_cycle += 14;
+                    //duty_cycle += 2;
                     NCO_Enable();
                     CWG_Enable();  // Get louder by putting complement of RA0 on RA1.
                     Timer2_SetPeriod(T2_BASE + photo); // varies duty cycle period
@@ -250,7 +233,6 @@ void main(void)
                 sleep_timer--;
             }
         }
-#endif // TESTING_SENSOR
 
         tick(100 + photo); // wait 1/4 a second or so before responding to changes
     }
